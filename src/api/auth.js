@@ -1,7 +1,7 @@
 // src/api/auth.js
 import axios from 'axios';
 
-const API_BASE = process.env.REACT_APP_API_BASE_URL;
+const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:8080/api/v1";
 
 // Create an axios instance
 const apiClient = axios.create({
@@ -14,7 +14,7 @@ const apiClient = axios.create({
 
 // (1) Check Backend Health
 export async function checkBackendHealth() {
-  const response = await apiClient.get('/health');
+  const response = await apiClient.get("/health");
   // expecting { status: 'healthy', message: '...' }
   return response.data;
 }
