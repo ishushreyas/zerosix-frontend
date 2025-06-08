@@ -23,7 +23,7 @@ export async function checkBackendHealth() {
 export async function fetchGoogleAuthURL() {
   // backend should return { url, state }
   const response = await apiClient.get('/auth/google/url');
-  return response.data;
+  return response.data.data;
 }
 
 // (3) Process Google Callback
