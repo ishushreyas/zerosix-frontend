@@ -49,8 +49,6 @@ export default function LoginPage() {
         })
         .finally(() => {
           setIsAuthenticating(false);
-          // Clean up URL parameters
-          window.history.replaceState({}, document.title, window.location.pathname);
         });
     }
   }, [navigate, setAuth, setSignupData]);
