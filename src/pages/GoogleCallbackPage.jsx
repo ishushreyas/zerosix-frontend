@@ -27,7 +27,7 @@ export default function GoogleCallbackPage() {
     } else {
         navigate('/login?error=missing_code_or_state');
     }
-  }, [searchParams, navigate, setAuth]);
+  }, []);
 
   return (
     <div className="flex justify-center items-center h-screen">
