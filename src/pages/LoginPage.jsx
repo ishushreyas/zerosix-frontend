@@ -1,5 +1,5 @@
 // src/pages/LoginPage.jsx
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { User, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { fetchGoogleAuthURL, processGoogleCallback } from '../api/auth';
@@ -8,7 +8,7 @@ import BackendStatus from '../components/BackendStatus';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function LoginPage() {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth, setSignupData } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [authError, setAuthError] = useState('');
@@ -27,20 +27,43 @@ export default function LoginPage() {
     error: 'bg-red-50 border-red-200 text-red-800',
   };
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const state = urlParams.get('state');
+
+    if (code && state) {
+      setIsAuthenticating(true);
+      processGoogleCallback(code, state)
+        .then(response => {
+          if (response.user_exists) {
+            setAuth(response.token, response.user);
+            navigate('/');
+          } else {
+            setSignupData({ session_id: response.session_id, google_data: response.google_data });
+            navigate('/signup');
+          }
+        })
+        .catch(err => {
+          setAuthError(err.message || 'Google authentication failed.');
+        })
+        .finally(() => {
+          setIsAuthenticating(false);
+          // Clean up URL parameters
+          window.history.replaceState({}, document.title, window.location.pathname);
+        });
+    }
+  }, [navigate, setAuth, setSignupData]);
+
   const handleGoogleAuth = async () => {
     setIsAuthenticating(true);
     setAuthError('');
 
     try {
-      // (1) Request Google OAuth URL
-      const { url, state } = await fetchGoogleAuthURL();
-
-      // Redirect user to Google:
+      const { url } = await fetchGoogleAuthURL();
       window.location.href = url;
-      // In a real flow, Google redirects back to /auth/google/callback
-      // We assume there's a separate route (e.g. /auth/google/callback) to handle it.
     } catch (err) {
-      setAuthError(err.message || 'Authentication failed');
+      setAuthError(err.message || 'Failed to initiate Google authentication.');
       setIsAuthenticating(false);
     }
   };

@@ -132,7 +132,7 @@ export async function processGoogleCallback(code, state) {
     }
 
     // For existing users
-    if (result.userExists) {
+    if (result.user_exists) {
       if (!result.token) {
         throw new Error('Missing authentication token for existing user');
       }
@@ -142,11 +142,8 @@ export async function processGoogleCallback(code, state) {
     } 
     // For new users
     else {
-      if (!result.tempToken) {
-        throw new Error('Missing temporary token for new user');
-      }
-      if (!result.googleData) {
-        throw new Error('Missing Google data for new user');
+      if (!result.session_id) {
+        throw new Error('Missing session ID for new user');
       }
     }
 
@@ -158,16 +155,16 @@ export async function processGoogleCallback(code, state) {
 }
 
 // (4) Create New User - Enhanced validation
-export async function createNewUser(userData, tempToken) {
+export async function createNewUser(userData, sessionId) {
   try {
-    console.log('Creating new user:', { ...userData, tempToken: tempToken ? 'present' : 'missing' });
+    console.log('Creating new user:', { ...userData, sessionId: sessionId ? 'present' : 'missing' });
 
-    if (!tempToken) {
-      throw new Error('Temporary token is required for user creation');
+    if (!sessionId) {
+      throw new Error('Session ID is required for user creation');
     }
 
     // Validate user data
-    const requiredFields = ['username', 'fullName', 'email'];
+    const requiredFields = ['username', 'fullName'];
     const missingFields = requiredFields.filter(field => !userData[field]?.trim());
     
     if (missingFields.length > 0) {
@@ -175,13 +172,8 @@ export async function createNewUser(userData, tempToken) {
     }
 
     const response = await apiClient.post(
-      '/users/create',
-      userData,
-      {
-        headers: {
-          Authorization: `Bearer ${tempToken}`,
-        },
-      }
+      '/auth/signup',
+      { ...userData, session_id: sessionId }
     );
 
     const result = response.data;

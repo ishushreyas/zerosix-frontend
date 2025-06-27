@@ -14,22 +14,18 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [signupSession, setSignupSession] = useState(null); // New state for signup session
 
   // On mount, check localStorage for existing token
   useEffect(() => {
     const storedToken = localStorage.getItem('authToken');
-    const storedUser = localStorage.getItem('user');
-    if (storedToken && storedUser) {
+    if (storedToken) {
       // Optionally verify with backend
       verifyJWTToken(storedToken)
-        .then((res) => {
-          if (res.valid) {
-            setToken(storedToken);
-            setUser(JSON.parse(storedUser));
-          } else {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('user');
-          }
+        .then((userRes) => {
+          // If verification is successful, userRes will contain the user object
+          setToken(storedToken);
+          setUser(userRes);
         })
         .catch(() => {
           localStorage.removeItem('authToken');
@@ -39,6 +35,13 @@ export function AuthProvider({ children }) {
     } else {
       setLoading(false);
     }
+
+    // Check for signup session in sessionStorage
+    const storedSignupSession = sessionStorage.getItem('signupSession');
+    if (storedSignupSession) {
+      setSignupSession(JSON.parse(storedSignupSession));
+    }
+
   }, []);
 
   const setAuth = (newToken, userObj) => {
@@ -46,6 +49,18 @@ export function AuthProvider({ children }) {
     localStorage.setItem('user', JSON.stringify(userObj));
     setToken(newToken);
     setUser(userObj);
+    sessionStorage.removeItem('signupSession'); // Clear signup session on successful auth
+    setSignupSession(null);
+  };
+
+  const setSignupData = (sessionData) => {
+    sessionStorage.setItem('signupSession', JSON.stringify(sessionData));
+    setSignupSession(sessionData);
+  };
+
+  const clearSignupData = () => {
+    sessionStorage.removeItem('signupSession');
+    setSignupSession(null);
   };
 
   const signOut = () => {
@@ -53,6 +68,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('user');
     setToken(null);
     setUser(null);
+    clearSignupData(); // Also clear signup data on sign out
   };
 
   // While verifying/loading, you could show a spinner
@@ -61,7 +77,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, setAuth, signOut }}>
+    <AuthContext.Provider value={{ user, token, signupSession, setAuth, setSignupData, clearSignupData, signOut }}>
       {children}
     </AuthContext.Provider>
   );
