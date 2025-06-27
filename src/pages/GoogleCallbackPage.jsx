@@ -8,7 +8,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 export default function GoogleCallbackPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { setAuth } = useContext(AuthContext);
 
   useEffect(() => {
     const code = searchParams.get('code');
