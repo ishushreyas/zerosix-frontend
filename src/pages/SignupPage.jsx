@@ -14,15 +14,11 @@ export default function SignupPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!signupSession) {
-      navigate('/login'); // Redirect if no signup session
-    } else {
-      // Pre-fill full name if available from Google data
-      if (signupSession.google_data && signupSession.google_data.name) {
-        setFullName(signupSession.google_data.name);
-      }
+    // Pre-fill full name if available from Google data
+    if (signupSession && signupSession.google_data && signupSession.google_data.name) {
+      setFullName(signupSession.google_data.name);
     }
-  }, [signupSession, navigate]);
+  }, [signupSession]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,7 +57,22 @@ export default function SignupPage() {
   };
 
   if (!signupSession) {
-    return <LoadingSpinner />; // Or a redirecting message
+    return (
+      <div className={`min-h-screen flex items-center justify-center p-4 ${theme.bg} transition-all duration-500`}>
+        <div className={`w-full max-w-md ${theme.cardBg} ${theme.shadow} rounded-[2rem] p-8 ${theme.border} border text-center`}>
+          <h1 className={`text-2xl mb-4 ${theme.text}`}>Signup Session Required</h1>
+          <p className={`${theme.textSecondary} mb-6`}>
+            To create an account, please initiate the signup process from the login page.
+          </p>
+          <button
+            onClick={() => navigate('/login')}
+            className={`w-full p-4 rounded-2xl font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${theme.buttonPrimary} text-white`}
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const theme = {
