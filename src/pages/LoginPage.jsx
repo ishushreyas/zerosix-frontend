@@ -1,14 +1,12 @@
 // src/pages/LoginPage.jsx
-import React, { useContext, useState, useEffect } from 'react';
-import { User, Shield } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { fetchGoogleAuthURL, processGoogleCallback } from '../api/auth';
-import { AuthContext } from '../context/AuthContext';
+import { fetchGoogleAuthURL } from '../api/auth';
 import BackendStatus from '../components/BackendStatus';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function LoginPage() {
-  const { setAuth, setSignupData } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [authError, setAuthError] = useState('');
@@ -27,31 +25,7 @@ export default function LoginPage() {
     error: 'bg-red-50 border-red-200 text-red-800',
   };
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    const state = urlParams.get('state');
-
-    if (code && state) {
-      setIsAuthenticating(true);
-      processGoogleCallback(code, state)
-        .then(response => {
-          if (response.user_exists) {
-            setAuth(response.token, response.user);
-            navigate('/');
-          } else {
-            setSignupData({ session_id: response.session_id, google_data: response.google_data });
-            navigate('/signup');
-          }
-        })
-        .catch(err => {
-          setAuthError(err.message || 'Google authentication failed.');
-        })
-        .finally(() => {
-          setIsAuthenticating(false);
-        });
-    }
-  }, [navigate, setAuth, setSignupData]);
+   
 
   const handleGoogleAuth = async () => {
     setIsAuthenticating(true);

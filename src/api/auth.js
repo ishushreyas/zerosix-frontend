@@ -193,6 +193,16 @@ export async function createNewUser(userData, sessionId) {
   }
 }
 
+export async function exchangeCodeForToken(code, state) {
+  try {
+    const response = await apiClient.get(`/auth/google/callback?code=${code}&state=${state}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to exchange code for token:', error.message);
+    throw error;
+  }
+}
+
 // (5) Verify JWT token
 export async function verifyJWTToken(token) {
   try {
