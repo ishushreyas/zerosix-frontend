@@ -17,7 +17,7 @@ export default function GoogleCallbackPage() {
     if (code && state) {
       exchangeCodeForToken(code, state)
         .then(data => {
-          login(data);
+          setAuth(data.token, data.user);
           navigate('/');
         })
         .catch(error => {
