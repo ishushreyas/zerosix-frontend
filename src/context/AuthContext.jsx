@@ -45,12 +45,15 @@ export function AuthProvider({ children }) {
   }, []);
 
   const setAuth = (newToken, userObj) => {
-    localStorage.setItem('authToken', newToken);
-    localStorage.setItem('user', JSON.stringify(userObj));
-    setToken(newToken);
-    setUser(userObj);
-    sessionStorage.removeItem('signupSession'); // Clear signup session on successful auth
-    setSignupSession(null);
+    return new Promise((resolve) => {
+      localStorage.setItem('authToken', newToken);
+      localStorage.setItem('user', JSON.stringify(userObj));
+      setToken(newToken);
+      setUser(userObj);
+      sessionStorage.removeItem('signupSession'); // Clear signup session on successful auth
+      setSignupSession(null);
+      resolve();
+    });
   };
 
   const setSignupSession = (sessionId, googleData) => {
