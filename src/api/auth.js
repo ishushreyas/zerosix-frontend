@@ -145,6 +145,9 @@ export async function processGoogleCallback(code, state) {
       if (!result.session_id) {
         throw new Error('Missing session ID for new user');
       }
+      if (result.csrf_token) {
+        localStorage.setItem('csrf_token', result.csrf_token);
+      }
     }
 
     return result;
@@ -171,9 +174,15 @@ export async function createNewUser(userData, sessionId) {
       throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
     }
 
+    const csrfToken = localStorage.getItem('csrf_token');
+    if (!csrfToken) {
+      throw new Error('CSRF token not found. Please try logging in again.');
+    }
+
     const response = await apiClient.post(
       '/auth/signup',
-      { ...userData, session_id: sessionId }
+      { ...userData, session_id: sessionId },
+      { headers: { 'X-CSRF-Token': csrfToken } }
     );
 
     const result = response.data;
