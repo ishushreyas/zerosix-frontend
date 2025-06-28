@@ -53,7 +53,8 @@ export function AuthProvider({ children }) {
     setSignupSession(null);
   };
 
-  const setSignupData = (sessionData) => {
+  const setSignupSession = (sessionId, googleData) => {
+    const sessionData = { session_id: sessionId, google_data: googleData };
     sessionStorage.setItem('signupSession', JSON.stringify(sessionData));
     setSignupSession(sessionData);
   };
@@ -77,7 +78,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, signupSession, setAuth, setSignupData, clearSignupData, signOut }}>
+    <AuthContext.Provider value={{ user, token, signupSession, setAuth, setSignupSession, clearSignupData, signOut }}>
       {children}
     </AuthContext.Provider>
   );

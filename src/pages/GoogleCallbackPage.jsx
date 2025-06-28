@@ -8,7 +8,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 export default function GoogleCallbackPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth, setSignupSession } = useContext(AuthContext);
 
   useEffect(() => {
     const code = searchParams.get('code');
@@ -17,8 +17,13 @@ export default function GoogleCallbackPage() {
     if (code && state) {
       exchangeCodeForToken(code, state)
         .then(data => {
-          setAuth(data.token, data.user);
-          navigate('/');
+          if (data.user_exists) {
+            setAuth(data.token, data.user);
+            navigate('/');
+          } else {
+            setSignupSession(data.session_id, data.google_data);
+            navigate('/signup');
+          }
         })
         .catch(error => {
           console.error('Error during Google callback:', error);
