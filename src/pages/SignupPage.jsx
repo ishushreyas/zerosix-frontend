@@ -13,7 +13,7 @@ export default function SignupPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (signupSession && signupSession.google_data && signupSession.google_data.name) {
+    if (signupSession?.google_data?.name) {
       setFullName(signupSession.google_data.name);
     }
   }, [signupSession]);
@@ -29,7 +29,7 @@ export default function SignupPage() {
       return;
     }
 
-    if (!signupSession || !signupSession.session_id) {
+    if (!signupSession?.session_id) {
       setError('No active signup session found. Please try logging in again.');
       setIsSubmitting(false);
       return;
@@ -43,6 +43,7 @@ export default function SignupPage() {
 
       if (response.success) {
         setAuth(response.token, response.user);
+        clearSignupData(); // Clear signup data after successful signup
         navigate('/');
       } else {
         setError(response.message || 'Signup failed. Please try again.');
@@ -54,17 +55,18 @@ export default function SignupPage() {
     }
   };
 
-  if (!signupSession) {
+  // If there's no session ID, the signup session is invalid.
+  if (!signupSession?.session_id) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100">
-        <div className="w-full max-w-md bg-white shadow-md rounded-lg p-8 text-center">
-          <h1 className="text-2xl mb-4 font-bold">Signup Session Required</h1>
-          <p className="text-gray-600 mb-6">
-            To create an account, please initiate the signup process from the login page.
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="w-full max-w-sm bg-white shadow-xl rounded-2xl p-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">Session Expired</h1>
+          <p className="text-gray-500 mb-6">
+            Your signup session has expired. Please return to the login page to start over.
           </p>
           <button
             onClick={() => navigate('/login')}
-            className="w-full p-4 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 bg-gray-800 text-white"
+            className="w-full py-3 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 bg-slate-900 text-white"
           >
             Go to Login
           </button>
@@ -74,44 +76,45 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100">
-      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="w-full max-w-sm bg-white shadow-xl rounded-2xl p-8">
         <div className="text-center mb-8">
-          <h1 className="text-2xl mb-2 font-bold">Complete Your Profile</h1>
-          <p className="text-gray-600 text-sm">
-            Just a few more details to get started!
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Almost there!</h1>
+          <p className="text-gray-500 mt-2">
+            Let's create your account.
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded-lg bg-red-50 border-red-200 text-red-800 border text-sm">
+          <div className="mb-6 p-3 rounded-lg bg-red-50 text-red-700 border border-red-200 text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="fullName" className="block text-sm font-medium mb-2 text-gray-600">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="fullName" className="block text-sm font-medium text-gray-600 mb-1">
               Full Name
             </label>
             <input
               type="text"
               id="fullName"
-              className="w-full p-3 rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-none"
+              className="w-full px-4 py-3 rounded-lg bg-gray-100 border-2 border-transparent focus:border-slate-900 focus:outline-none transition"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
               disabled={isSubmitting}
             />
           </div>
-          <div className="mb-6">
-            <label htmlFor="username" className="block text-sm font-medium mb-2 text-gray-600">
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-600 mb-1">
               Username
             </label>
             <input
               type="text"
               id="username"
-              className="w-full p-3 rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-none"
+              placeholder="e.g., jandoe"
+              className="w-full px-4 py-3 rounded-lg bg-gray-100 border-2 border-transparent focus:border-slate-900 focus:outline-none transition"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -121,22 +124,22 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full p-4 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 bg-gray-800 text-white flex items-center justify-center gap-3 disabled:opacity-50"
+            className="w-full py-3 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 bg-slate-900 text-white flex items-center justify-center gap-3 disabled:opacity-60"
           >
             {isSubmitting ? <LoadingSpinner size={5} color="border-white" /> : 'Create Account'}
           </button>
         </form>
 
-        <div className="mt-8 text-center">
+        <div className="mt-6 text-center">
           <button
             onClick={() => {
               clearSignupData();
               navigate('/login');
             }}
-            className="text-sm text-gray-600 hover:underline"
+            className="text-sm text-gray-500 hover:text-gray-800 hover:underline"
             disabled={isSubmitting}
           >
-            Cancel and go back to login
+            Cancel
           </button>
         </div>
       </div>

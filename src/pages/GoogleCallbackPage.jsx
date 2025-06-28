@@ -18,7 +18,7 @@ export default function GoogleCallbackPage() {
       exchangeCodeForToken(code, state)
         .then(async (data) => {
           if (data.user_exists) {
-            await setAuth(data.token, data.user);
+            await setAuth(data.session_id, data.google_data);
             navigate('/');
           } else {
             setSignupSession(data.session_id, data.google_data);
