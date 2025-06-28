@@ -17,11 +17,11 @@ export default function GoogleCallbackPage() {
     if (code && state) {
       exchangeCodeForToken(code, state)
         .then(async (data) => {
-          if (data.user_exists) {
-            await setAuth(data.session_id, data.google_data);
+          if (data.data.user_exists) {
+            await setAuth(data.data.session_id, data.data.google_data);
             navigate('/');
           } else {
-            setSignupSession(data.session_id, data.google_data);
+            setSignupSession(data.data.session_id, data.data.google_data);
             navigate('/signup');
           }
         })
