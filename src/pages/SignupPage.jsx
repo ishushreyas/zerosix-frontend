@@ -1,4 +1,3 @@
-// src/pages/SignupPage.jsx
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -14,7 +13,6 @@ export default function SignupPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Pre-fill full name if available from Google data
     if (signupSession && signupSession.google_data && signupSession.google_data.name) {
       setFullName(signupSession.google_data.name);
     }
@@ -45,7 +43,7 @@ export default function SignupPage() {
 
       if (response.success) {
         setAuth(response.token, response.user);
-        navigate('/'); // Redirect to home on successful signup
+        navigate('/');
       } else {
         setError(response.message || 'Signup failed. Please try again.');
       }
@@ -58,15 +56,15 @@ export default function SignupPage() {
 
   if (!signupSession) {
     return (
-      <div className={`min-h-screen flex items-center justify-center p-4 ${theme.bg} transition-all duration-500`}>
-        <div className={`w-full max-w-md ${theme.cardBg} ${theme.shadow} rounded-[2rem] p-8 ${theme.border} border text-center`}>
-          <h1 className={`text-2xl mb-4 ${theme.text}`}>Signup Session Required</h1>
-          <p className={`${theme.textSecondary} mb-6`}>
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100">
+        <div className="w-full max-w-md bg-white shadow-md rounded-lg p-8 text-center">
+          <h1 className="text-2xl mb-4 font-bold">Signup Session Required</h1>
+          <p className="text-gray-600 mb-6">
             To create an account, please initiate the signup process from the login page.
           </p>
           <button
             onClick={() => navigate('/login')}
-            className={`w-full p-4 rounded-2xl font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${theme.buttonPrimary} text-white`}
+            className="w-full p-4 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 bg-gray-800 text-white"
           >
             Go to Login
           </button>
@@ -75,46 +73,31 @@ export default function SignupPage() {
     );
   }
 
-  const theme = {
-    bg: 'bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200',
-    cardBg: 'bg-gray-100/80 backdrop-blur-xl',
-    shadow: 'shadow-2xl shadow-gray-400/20',
-    text: 'text-gray-900',
-    textSecondary: 'text-gray-600',
-    border: 'border-gray-300/20',
-    buttonPrimary: 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900',
-    inputBorder: 'border-gray-300 focus:border-gray-500',
-    error: 'bg-red-50 border-red-200 text-red-800',
-  };
-
   return (
-    <div className={`min-h-screen flex items-center justify-center p-4 ${theme.bg} transition-all duration-500`}>
-      <div className={`w-full max-w-md ${theme.cardBg} ${theme.shadow} rounded-[2rem] p-8 ${theme.border} border`}>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100">
+      <div className="w-full max-w-md bg-white shadow-md rounded-lg p-8">
         <div className="text-center mb-8">
-          <h1 className={`text-2xl mb-2 ${theme.text}`}>
-            <span className="font-light">Complete Your</span>{' '}
-            <span className="font-bold">Profile</span>
-          </h1>
-          <p className={`${theme.textSecondary} text-sm`}>
+          <h1 className="text-2xl mb-2 font-bold">Complete Your Profile</h1>
+          <p className="text-gray-600 text-sm">
             Just a few more details to get started!
           </p>
         </div>
 
         {error && (
-          <div className={`mb-6 p-4 rounded-xl ${theme.error} border text-sm`}>
+          <div className="mb-6 p-4 rounded-lg bg-red-50 border-red-200 text-red-800 border text-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="fullName" className={`block text-sm font-medium mb-2 ${theme.textSecondary}`}>
+            <label htmlFor="fullName" className="block text-sm font-medium mb-2 text-gray-600">
               Full Name
             </label>
             <input
               type="text"
               id="fullName"
-              className={`w-full p-3 rounded-xl border ${theme.inputBorder} ${theme.cardBg} ${theme.text} focus:outline-none`}
+              className="w-full p-3 rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-none"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
@@ -122,13 +105,13 @@ export default function SignupPage() {
             />
           </div>
           <div className="mb-6">
-            <label htmlFor="username" className={`block text-sm font-medium mb-2 ${theme.textSecondary}`}>
+            <label htmlFor="username" className="block text-sm font-medium mb-2 text-gray-600">
               Username
             </label>
             <input
               type="text"
               id="username"
-              className={`w-full p-3 rounded-xl border ${theme.inputBorder} ${theme.cardBg} ${theme.text} focus:outline-none`}
+              className="w-full p-3 rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-none"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -138,7 +121,7 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full p-4 rounded-2xl font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${theme.buttonPrimary} text-white flex items-center justify-center gap-3 disabled:opacity-50`}
+            className="w-full p-4 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 bg-gray-800 text-white flex items-center justify-center gap-3 disabled:opacity-50"
           >
             {isSubmitting ? <LoadingSpinner size={5} color="border-white" /> : 'Create Account'}
           </button>
@@ -150,7 +133,7 @@ export default function SignupPage() {
               clearSignupData();
               navigate('/login');
             }}
-            className={`text-sm ${theme.textSecondary} hover:underline`}
+            className="text-sm text-gray-600 hover:underline"
             disabled={isSubmitting}
           >
             Cancel and go back to login
