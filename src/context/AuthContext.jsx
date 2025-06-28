@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [signupSession, setSignupSession] = useState(null); // New state for signup session
+  const [signupSession, _setSignupSession] = useState(null); // New state for signup session
 
   // On mount, check localStorage for existing token
   useEffect(() => {
@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
     // Check for signup session in sessionStorage
     const storedSignupSession = sessionStorage.getItem('signupSession');
     if (storedSignupSession) {
-      setSignupSession(JSON.parse(storedSignupSession));
+      _setSignupSession(JSON.parse(storedSignupSession));
     }
 
   }, []);
@@ -51,7 +51,7 @@ export function AuthProvider({ children }) {
       setToken(newToken);
       setUser(userObj);
       sessionStorage.removeItem('signupSession'); // Clear signup session on successful auth
-      setSignupSession(null);
+      _setSignupSession(null);
       resolve();
     });
   };
@@ -59,12 +59,12 @@ export function AuthProvider({ children }) {
   const setSignupSession = (sessionId, googleData) => {
     const sessionData = { session_id: sessionId, google_data: googleData };
     sessionStorage.setItem('signupSession', JSON.stringify(sessionData));
-    setSignupSession(sessionData);
+    _setSignupSession(sessionData);
   };
 
   const clearSignupData = () => {
     sessionStorage.removeItem('signupSession');
-    setSignupSession(null);
+    _setSignupSession(null);
   };
 
   const signOut = () => {
