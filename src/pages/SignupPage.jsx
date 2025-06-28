@@ -42,7 +42,7 @@ export default function SignupPage() {
       );
 
       if (response.success) {
-        setAuth(response.token, response.user);
+        setAuth(response.data.session_id, response.data.google_data);
         clearSignupData(); // Clear signup data after successful signup
         navigate('/');
       } else {

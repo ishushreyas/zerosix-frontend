@@ -132,20 +132,20 @@ export async function processGoogleCallback(code, state) {
     }
 
     // For existing users
-    if (result.user_exists) {
-      if (!result.token) {
+    if (result.data.user_exists) {
+      if (!result.data.token) {
         throw new Error('Missing authentication token for existing user');
       }
-      if (!result.user) {
+      if (!result.data.user) {
         throw new Error('Missing user data for existing user');
       }
     } 
     // For new users
     else {
-      if (!result.session_id) {
+      if (!result.data.session_id) {
         throw new Error('Missing session ID for new user');
       }
-      if (result.csrf_token) {
+      if (result.data.csrf_token) {
         localStorage.setItem('csrf_token', result.csrf_token);
       }
     }
