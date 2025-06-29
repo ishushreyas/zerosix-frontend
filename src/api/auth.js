@@ -100,7 +100,7 @@ export async function fetchGoogleAuthURL() {
 export async function processGoogleCallback(code, state) {
   try {
     console.log('Processing Google callback with:', { 
-      code: code ? `${code.substring(0, 10)}...` : 'null', 
+      code: code || 'null', 
       state: state || 'null' 
     });
 
