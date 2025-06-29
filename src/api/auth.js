@@ -150,7 +150,7 @@ export async function processGoogleCallback(code, state) {
       }
     }
 
-    return result.data;
+    return result;
   } catch (error) {
     console.error('Google callback processing failed:', error.message);
     throw error;
