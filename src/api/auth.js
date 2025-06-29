@@ -146,11 +146,11 @@ export async function processGoogleCallback(code, state) {
         throw new Error('Missing session ID for new user');
       }
       if (result.data.csrf_token) {
-        localStorage.setItem('csrf_token', result.csrf_token);
+        localStorage.setItem('csrf_token', result.data.csrf_token);
       }
     }
 
-    return result;
+    return result.data;
   } catch (error) {
     console.error('Google callback processing failed:', error.message);
     throw error;
@@ -198,16 +198,6 @@ export async function createNewUser(userData, sessionId) {
     return result;
   } catch (error) {
     console.error('User creation failed:', error.message);
-    throw error;
-  }
-}
-
-export async function exchangeCodeForToken(code, state) {
-  try {
-    const response = await apiClient.get(`/auth/google/callback?code=${code}&state=${state}`);
-    return response.data;
-  } catch (error) {
-    console.error('Failed to exchange code for token:', error.message);
     throw error;
   }
 }

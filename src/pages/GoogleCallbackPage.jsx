@@ -2,7 +2,7 @@
 import React, { useEffect, useContext } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { exchangeCodeForToken } from '../api/auth';
+import { processGoogleCallback } from '../api/auth';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function GoogleCallbackPage() {
@@ -15,7 +15,7 @@ export default function GoogleCallbackPage() {
     const state = searchParams.get('state');
 
     if (code && state) {
-      exchangeCodeForToken(code, state)
+      processGoogleCallback(code, state)
         .then(async (data) => {
           if (data.data.user_exists) {
             await setAuth(data.data.session_id, data.data.google_data);

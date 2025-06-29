@@ -7,8 +7,5 @@ export default defineConfig({
   plugins: [
 	  tailwindcss(),
 	  react(),
-  ],
-  css: {
-    transformer: 'postcss'
-  },
+  ], 
 })
