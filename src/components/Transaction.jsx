@@ -4,9 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'; // Import Select components
 
 const Transaction = () => {
   const [transactions, setTransactions] = useState([]);
+  const [users, setUsers] = useState([]); // New state for users
   const [newTransaction, setNewTransaction] = useState({
     payer_id: '',
     amount: '',
@@ -20,7 +22,17 @@ const Transaction = () => {
 
   useEffect(() => {
     fetchTransactions();
+    fetchUsers(); // Fetch users when component mounts
   }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await api.getUsers();
+      setUsers(response.data.users || []);
+    } catch (err) {
+      console.error('Failed to fetch users:', err);
+    }
+  };
 
   const fetchTransactions = async () => {
     try {
@@ -66,6 +78,11 @@ const Transaction = () => {
     }
   };
 
+  const getUsernameById = (id) => {
+    const user = users.find((u) => u.id === id);
+    return user ? user.username : `Unknown User (${id})`;
+  };
+
   if (loading) {
     return <div className="p-4 text-center">Loading transactions...</div>;
   }
@@ -86,15 +103,23 @@ const Transaction = () => {
         <CardContent>
           <form onSubmit={handleAddTransaction} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="payer_id">Payer ID</Label>
-              <Input
-                id="payer_id"
-                name="payer_id"
+              <Label htmlFor="payer_id">Payer</Label>
+              <Select
+                onValueChange={(value) => setNewTransaction((prev) => ({ ...prev, payer_id: value }))}
                 value={newTransaction.payer_id}
-                onChange={handleInputChange}
-                placeholder="e.g., user_123"
                 required
-              />
+              >
+                <SelectTrigger id="payer_id">
+                  <SelectValue placeholder="Select a payer" />
+                </SelectTrigger>
+                <SelectContent>
+                  {users.map((user) => (
+                    <SelectItem key={user.id} value={user.id}>
+                      {user.username}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="amount">Amount</Label>
@@ -183,7 +208,7 @@ const Transaction = () => {
                   {transactions.map((transaction) => (
                     <tr key={transaction.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{transaction.id.substring(0, 8)}...</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.payer_id}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getUsernameById(transaction.payer_id)}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${transaction.amount.toFixed(2)}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.remark}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.category}</td>
