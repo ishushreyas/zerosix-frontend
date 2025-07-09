@@ -96,7 +96,7 @@ const MainLayout = () => {
         {/* Main Content */}
         <main className="flex-1 p-6 pb-24 md:pb-6">
           <div className="max-w-6xl mx-auto">
-            <div className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl rounded-3xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl min-h-[calc(100vh-12rem)] p-8">
+            <div className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl rounded-3xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl min-h-[calc(100vh-12rem)]">
               <Outlet />
             </div>
           </div>

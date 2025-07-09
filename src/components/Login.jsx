@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { MessageCircle } from 'lucide-react';
 
 const Login = () => {
@@ -8,7 +8,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { loginWithGoogle } = useAuth();
   const navigate = useNavigate();
-
+  const location = useLocation();
+  
   const handleGoogleSignIn = async () => {
     try {
       setError('');

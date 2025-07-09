@@ -1,6 +1,7 @@
 // contexts/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../api';
+const navigate = useNavigate();
 
 import { auth, googleProvider } from '../firebase';
 import {
@@ -46,7 +47,7 @@ export const AuthProvider = ({ children }) => {
     await api.sessionLogin(idToken);
     setUser(firebaseUser.user);
     setIsLoading(false);
-    navigate(from, { replace: true });
+    navigate(path, { replace: true });
   };
 
   const logout = async () => {
