@@ -46,7 +46,7 @@ const SelectTrigger = React.forwardRef(({ className, children, placeholder, ...p
         else if (ref) ref.current = node;
       }}
       className={cn(
-        "flex h-10 w-full items-center justify-between rounded-xl border border-neutral-300 bg-white px-4 py-2 text-sm text-black shadow-sm transition-all duration-200 ease-in-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50",
+        "flex h-10 items-center justify-between rounded-xl border border-neutral-300 bg-white px-4 py-2 text-sm text-black shadow-sm transition-all duration-200 ease-in-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50",
         className
       )}
       onClick={() => setIsOpen(!isOpen)}
@@ -84,7 +84,7 @@ const SelectContent = React.forwardRef(({ className, children, ...props }, ref) 
     <div
       ref={ref}
       className={cn(
-        "select-content absolute z-50 mt-2 w-full rounded-xl border border-neutral-200 bg-white text-sm shadow-lg transition-all duration-200 animate-in fade-in",
+        "select-content absolute z-50 mt-2 rounded-xl border border-neutral-200 bg-white text-sm shadow-lg transition-all duration-200 animate-in fade-in",
         className
       )}
       {...props}
