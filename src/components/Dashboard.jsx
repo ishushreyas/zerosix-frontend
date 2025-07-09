@@ -3,33 +3,32 @@ import api from '../api';
 import MonthYearPicker from './MonthYearPicker';
 
 const Dashboard = () => {
-  const [summaryData, setSummaryData] = useState(null);
+  const [summaryData, setSummaryData] = useState({
+    active_users: 0,
+    average_transaction: 0,
+    category_expenses: {},
+    largest_transaction: 0,
+    payment_method_expenses: {},
+    total_expenses: 0,
+    transaction_count: 0,
+    user_balances: {},
+    user_expenses: {},
+    loading: true,
+    error: null,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
-    const fetchSummary = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const month = selectedDate.getMonth() + 1;
-        const year = selectedDate.getFullYear();
-        const response = await api.getSummary(month, year);
-        setSummaryData(response.data);
-      } catch (e) {
-        setError(e);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setSummaryData(prev => ({ ...prev, loading: true }));
+    const startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 2).toISOString().split("T")[0];
+    const endDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 2).toISOString().split("T")[0];
 
-    fetchSummary();
+    api.getSummary(startDate, endDate)
+      .then(data => setSummaryData({ ...data, loading: false }))
+      .catch(error => setSummaryData(prev => ({ ...prev, error, loading: false })));
   }, [selectedDate]);
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
 
   if (loading) {
     return (

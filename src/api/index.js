@@ -42,8 +42,8 @@ export default {
     });
   },
   
-  getSummary(month, year) {
-      return apiClient.get('/summary', { params: { month, year } });
+  getSummary(startDate, endDate) {
+      return apiClient.get(`/api/summary?start_date=${startDate}&end_date=${endDate}`);
   },
 
   // Transactions

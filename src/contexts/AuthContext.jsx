@@ -39,13 +39,14 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(false);
   };
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = async (path) => {
     setIsLoading(true);
     const firebaseUser = await signInWithPopup(auth, googleProvider);
     const idToken = await firebaseUser.user.getIdToken();
     await api.sessionLogin(idToken);
     setUser(firebaseUser.user);
     setIsLoading(false);
+    navigate(from, { replace: true });
   };
 
   const logout = async () => {

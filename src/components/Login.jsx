@@ -13,7 +13,7 @@ const Login = () => {
     try {
       setError('');
       setLoading(true);
-      await loginWithGoogle();
+      await loginWithGoogle(location.state?.from?.pathname || '/');
     } catch (err) {
       setError('Failed to sign in with Google.');
       console.error(err);
@@ -39,7 +39,7 @@ const Login = () => {
               Welcome Back
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Sign in to continue to MessagingApp
+              Sign in to continue to Zerosix
             </p>
           </div>
         </div>
