@@ -1,55 +1,38 @@
-// src/App.jsx
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams, useNavigate } from 'react-router-dom';
-import { AuthProvider, AuthContext } from './context/AuthContext';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
-import HomePage from './pages/HomePage';
-import GoogleCallbackPage from './pages/GoogleCallbackPage';
+// App.js
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { AuthProvider } from './contexts/AuthContext';
 
+import MainLayout from './components/MainLayout';
+import ProtectedRoute from './components/ProtectedRoute';
+import Login from './components/Login';
+import Register from './components/Register';
+import Dashboard from './components/Dashboard';
+import Chat from './components/Chat';
 
-function ProtectedRoute({ children }) {
-  const { user } = React.useContext(AuthContext);
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
-}
-
-function AppContent() {
-  const { user } = React.useContext(AuthContext);
-
-  useEffect(() => {
-    // When the user is authenticated, clean up the URL.
-    if (user && window.location.search.includes('code=')) {
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, [user]);
-
+const App = () => {
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
-      <Route path="/auth/google/callback" element={<GoogleCallbackPage />} />
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <HomePage />
-          </ProtectedRoute>
-        }
-      />
-     <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
-}
+    <ThemeProvider>
+      <AuthProvider>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-export default function App() {
-  return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/messages" element={<Chat />} />
+              <Route path="/profile" element={<Profile />} />
+            </Route>
+          </Route>
+
+        </Routes>
+      </AuthProvider>
+    </ThemeProvider>
   );
-}
+};
+
+export default App;

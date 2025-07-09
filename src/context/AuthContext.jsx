@@ -1,88 +1,78 @@
-// src/context/AuthContext.jsx
-import React, { createContext, useState, useEffect } from 'react';
-import { verifyJWTToken } from '../api/auth';
+// contexts/AuthContext.js
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import api from '../api';
+import { auth, googleProvider } from '../firebase';
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 
-// Create context
-export const AuthContext = createContext({
-  user: null,
-  token: null,
-  setAuth: () => {},
-  signOut: () => {},
-});
+const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
+
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [signupSession, _setSignupSession] = useState(null); // New state for signup session
+  const [isLoading, setIsLoading] = useState(true);
 
-  // On mount, check localStorage for existing token
+  const register = async (email, password) => {
+    setIsLoading(true);
+    const firebaseUser = await createUserWithEmailAndPassword(auth, email, password);
+    await api.register({ email, uid: firebaseUser.user.uid });
+    const idToken = await firebaseUser.user.getIdToken();
+    await api.sessionLogin(idToken);
+    setUser(firebaseUser.user);
+    setIsLoading(false);
+  };
+
+  const login = async (email, password) => {
+    setIsLoading(true);
+    const firebaseUser = await signInWithEmailAndPassword(auth, email, password);
+    const idToken = await firebaseUser.user.getIdToken();
+    await api.sessionLogin(idToken);
+    setUser(firebaseUser.user);
+    setIsLoading(false);
+  };
+
+  const loginWithGoogle = async () => {
+    setIsLoading(true);
+    const firebaseUser = await signInWithPopup(auth, googleProvider);
+    const idToken = await firebaseUser.user.getIdToken();
+    await api.sessionLogin(idToken);
+    setUser(firebaseUser.user);
+    setIsLoading(false);
+  };
+
+  const logout = async () => {
+    await api.logout();
+    setUser(null);
+  };
+
   useEffect(() => {
-    const storedToken = localStorage.getItem('authToken');
-    if (storedToken) {
-      // Optionally verify with backend
-      verifyJWTToken(storedToken)
-        .then((userRes) => {
-          // If verification is successful, userRes will contain the user object
-          setToken(storedToken);
-          setUser(userRes);
-        })
-        .catch(() => {
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('user');
-        })
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setIsLoading(false);
+    });
 
-    // Check for signup session in sessionStorage
-    const storedSignupSession = sessionStorage.getItem('signupSession');
-    if (storedSignupSession) {
-      _setSignupSession(JSON.parse(storedSignupSession));
-    }
-
+    return unsubscribe;
   }, []);
 
-  const setAuth = (newToken, userObj) => {
-    return new Promise((resolve) => {
-      localStorage.setItem('authToken', newToken);
-      localStorage.setItem('user', JSON.stringify(userObj));
-      setToken(newToken);
-      setUser(userObj);
-      sessionStorage.removeItem('signupSession'); // Clear signup session on successful auth
-      _setSignupSession(null);
-      resolve();
-    });
+  const value = {
+    user,
+    isLoading,
+    register,
+    login,
+    loginWithGoogle,
+    logout,
   };
-
-  const setSignupSession = (sessionId, googleData) => {
-    const sessionData = { session_id: sessionId, google_data: googleData };
-    sessionStorage.setItem('signupSession', JSON.stringify(sessionData));
-    _setSignupSession(sessionData);
-  };
-
-  const clearSignupData = () => {
-    sessionStorage.removeItem('signupSession');
-    _setSignupSession(null);
-  };
-
-  const signOut = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    setToken(null);
-    setUser(null);
-    clearSignupData(); // Also clear signup data on sign out
-  };
-
-  // While verifying/loading, you could show a spinner
-  if (loading) {
-    return null; // or a fullscreen spinner
-  }
 
   return (
-    <AuthContext.Provider value={{ user, token, signupSession, setAuth, setSignupSession, clearSignupData, signOut }}>
-      {children}
+    <AuthContext.Provider value={value}>
+      {!isLoading && children}
     </AuthContext.Provider>
   );
-}
+};
