@@ -10,6 +10,7 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import Profile from './components/Profile';
 import Chat from './components/Chat';
+import Transaction from './components/Transaction';
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
               <Route path="/" element={<Dashboard />} />
               <Route path="/messages" element={<Chat />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/transactions" element={<Transaction />} />
             </Route>
           </Route>
 

@@ -18,7 +18,7 @@ const Chat = () => {
   }, [messages]);
 
   useEffect(() => {
-    ws.current = new WebSocket('ws://secure-meggie-ishushreyas-4703d2bf.koyeb.app/ws');
+    ws.current = new WebSocket('wss://secure-meggie-ishushreyas-4703d2bf.koyeb.app/ws');
 
     ws.current.onopen = () => console.log('connected');
     ws.current.onmessage = (event) => {
