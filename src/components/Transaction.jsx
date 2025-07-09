@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import api from '../api';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'; // Import Select components
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Plus, CreditCard, Calendar, User, DollarSign, Tag, MessageSquare } from 'lucide-react';
 
 const Transaction = () => {
   const [transactions, setTransactions] = useState([]);
-  const [users, setUsers] = useState([]); // New state for users
+  
+  const [users, setUsers] = useState([]);
+  
   const [newTransaction, setNewTransaction] = useState({
     payer_id: '',
     amount: '',
@@ -17,52 +19,36 @@ const Transaction = () => {
     payment_method: '',
     category: '',
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetchTransactions();
-    fetchUsers(); // Fetch users when component mounts
-  }, []);
-
-  const fetchUsers = async () => {
-    try {
-      const response = await api.getUsers();
-      console.log('API Response for users:', response.data); // Log the API response
-      setUsers(response.data || []);
-      console.log('Users state after setting:', response.data.users || []); // Log the users state
-    } catch (err) {
-      console.error('Failed to fetch users:', err);
-    }
-  };
-
-  const fetchTransactions = async () => {
-    try {
-      setLoading(true);
-      const response = await api.getTransactions();
-      setTransactions(response.data.transactions || []);
-    } catch (err) {
-      setError('Failed to fetch transactions.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewTransaction((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddTransaction = async (e) => {
-    e.preventDefault();
+  const handleAddTransaction = async () => {
+    if (!newTransaction.payer_id || !newTransaction.amount || !newTransaction.category || !newTransaction.payment_method || !newTransaction.remark) {
+      return;
+    }
+    
     try {
       setLoading(true);
-      await api.addTransaction({
-        ...newTransaction,
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const newTx = {
+        id: `tx_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+        payer_id: newTransaction.payer_id,
         amount: parseFloat(newTransaction.amount),
+        remark: newTransaction.remark,
+        category: newTransaction.category,
+        payment_method: newTransaction.payment_method,
+        created_at: new Date().toISOString(),
         members: newTransaction.members.length > 0 ? newTransaction.members.split(',').map(m => m.trim()) : [],
-      });
+      };
+      
+      setTransactions(prev => [newTx, ...prev]);
       setNewTransaction({
         payer_id: '',
         amount: '',
@@ -71,7 +57,6 @@ const Transaction = () => {
         payment_method: '',
         category: '',
       });
-      fetchTransactions(); // Re-fetch transactions after adding
     } catch (err) {
       setError('Failed to add transaction.');
       console.error(err);
@@ -81,156 +66,261 @@ const Transaction = () => {
   };
 
   const getUsernameById = (id) => {
-    console.log('Looking up user for ID:', id);
-    console.log('Available users:', users);
     const user = users.find((u) => u.id === id);
     return user ? user.username : `Unknown User (${id})`;
   };
 
-  if (loading) {
-    return <div className="p-4 text-center">Loading transactions...</div>;
-  }
+  const categories = [
+    'Food & Dining',
+    'Groceries',
+    'Transportation',
+    'Entertainment',
+    'Shopping',
+    'Health & Fitness',
+    'Travel',
+    'Bills & Utilities',
+    'Other'
+  ];
 
-  if (error) {
-    return <div className="p-4 text-center text-red-500">{error}</div>;
-  }
+  const paymentMethods = [
+    'Credit Card',
+    'Debit Card',
+    'Cash',
+    'Digital Wallet',
+    'Bank Transfer'
+  ];
 
   return (
-    <div className="p-4 space-y-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Transaction Management</h1>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="py-6">
+            <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Transactions</h1>
+            <p className="mt-2 text-sm text-gray-600">Manage your expenses and track spending</p>
+          </div>
+        </div>
+      </div>
 
-      {/* Add New Transaction Form */}
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold">Add New Transaction</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleAddTransaction} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="payer_id">Payer</Label>
-              <Select
-                onValueChange={(value) => setNewTransaction((prev) => ({ ...prev, payer_id: value }))}
-                value={newTransaction.payer_id}
-                required
-              >
-                <SelectTrigger id="payer_id">
-                  <SelectValue placeholder="Select a payer" />
-                </SelectTrigger>
-                <SelectContent>
-                  {users.map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
-                      {user.username}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="amount">Amount</Label>
-              <Input
-                id="amount"
-                name="amount"
-                type="number"
-                step="0.01"
-                value={newTransaction.amount}
-                onChange={handleInputChange}
-                placeholder="e.g., 50.00"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="members">Members (comma-separated IDs)</Label>
-              <Input
-                id="members"
-                name="members"
-                value={newTransaction.members}
-                onChange={handleInputChange}
-                placeholder="e.g., user_456, user_789"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="remark">Remark</Label>
-              <Input
-                id="remark"
-                name="remark"
-                value={newTransaction.remark}
-                onChange={handleInputChange}
-                placeholder="e.g., Groceries"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="payment_method">Payment Method</Label>
-              <Input
-                id="payment_method"
-                name="payment_method"
-                value={newTransaction.payment_method}
-                onChange={handleInputChange}
-                placeholder="e.g., Credit Card"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Input
-                id="category"
-                name="category"
-                value={newTransaction.category}
-                onChange={handleInputChange}
-                placeholder="e.g., Food"
-              />
-            </div>
-            <div className="col-span-full">
-              <Button type="submit" className="w-full">
-                Add Transaction
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Add New Transaction Form */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="px-6 py-5 border-b border-gray-200">
+                <div className="flex items-center space-x-3">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 bg-black rounded-full flex items-center justify-center">
+                      <Plus className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">New Transaction</h3>
+                    <p className="text-sm text-gray-500">Add a new expense</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="px-6 py-6">
+                <div className="space-y-6">
+                  <div>
+                    <Label htmlFor="payer_id" className="text-sm font-medium text-gray-700 mb-2 block">
+                      <User className="w-4 h-4 inline mr-2" />
+                      Payer
+                    </Label>
+                    <Select
+                      onValueChange={(value) => setNewTransaction((prev) => ({ ...prev, payer_id: value }))}
+                      value={newTransaction.payer_id}
+                    >
+                      <SelectTrigger className="w-full h-12 border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent">
+                        <SelectValue placeholder="Select payer" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border-gray-200">
+                        {users.map((user) => (
+                          <SelectItem key={user.id} value={user.id} className="rounded-lg">
+                            {user.username}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-      {/* Transaction History List */}
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold">Transaction History</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {transactions.length === 0 ? (
-            <p className="text-gray-600">No transactions found.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payer</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remark</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Members</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {transactions.map((transaction) => (
-                    <tr key={transaction.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{transaction.id.substring(0, 8)}...</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{getUsernameById(transaction.payer_id)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${transaction.amount.toFixed(2)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.remark}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.category}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {transaction.members && transaction.members.length > 0
-                          ? transaction.members.map((memberId) => getUsernameById(memberId)).join(', ')
-                          : 'N/A'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(transaction.created_at).toLocaleDateString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                  <div>
+                    <Label htmlFor="amount" className="text-sm font-medium text-gray-700 mb-2 block">
+                      <DollarSign className="w-4 h-4 inline mr-2" />
+                      Amount
+                    </Label>
+                    <Input
+                      id="amount"
+                      name="amount"
+                      type="number"
+                      step="0.01"
+                      value={newTransaction.amount}
+                      onChange={handleInputChange}
+                      placeholder="0.00"
+                      className="h-12 border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="category" className="text-sm font-medium text-gray-700 mb-2 block">
+                      <Tag className="w-4 h-4 inline mr-2" />
+                      Category
+                    </Label>
+                    <Select
+                      onValueChange={(value) => setNewTransaction((prev) => ({ ...prev, category: value }))}
+                      value={newTransaction.category}
+                    >
+                      <SelectTrigger className="w-full h-12 border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border-gray-200">
+                        {categories.map((category) => (
+                          <SelectItem key={category} value={category} className="rounded-lg">
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="payment_method" className="text-sm font-medium text-gray-700 mb-2 block">
+                      <CreditCard className="w-4 h-4 inline mr-2" />
+                      Payment Method
+                    </Label>
+                    <Select
+                      onValueChange={(value) => setNewTransaction((prev) => ({ ...prev, payment_method: value }))}
+                      value={newTransaction.payment_method}
+                    >
+                      <SelectTrigger className="w-full h-12 border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent">
+                        <SelectValue placeholder="Select payment method" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border-gray-200">
+                        {paymentMethods.map((method) => (
+                          <SelectItem key={method} value={method} className="rounded-lg">
+                            {method}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="remark" className="text-sm font-medium text-gray-700 mb-2 block">
+                      <MessageSquare className="w-4 h-4 inline mr-2" />
+                      Description
+                    </Label>
+                    <Input
+                      id="remark"
+                      name="remark"
+                      value={newTransaction.remark}
+                      onChange={handleInputChange}
+                      placeholder="What was this for?"
+                      className="h-12 border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="members" className="text-sm font-medium text-gray-700 mb-2 block">
+                      Members (optional)
+                    </Label>
+                    <Input
+                      id="members"
+                      name="members"
+                      value={newTransaction.members}
+                      onChange={handleInputChange}
+                      placeholder="user_456, user_789"
+                      className="h-12 border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Comma-separated user IDs</p>
+                  </div>
+
+                  <Button 
+                    onClick={handleAddTransaction}
+                    disabled={loading}
+                    className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium rounded-xl transition-colors duration-200 disabled:opacity-50"
+                  >
+                    {loading ? (
+                      <div className="flex items-center justify-center">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Adding...
+                      </div>
+                    ) : (
+                      <>
+                        <Plus className="w-5 h-5 mr-2" />
+                        Add Transaction
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+
+          {/* Transaction History */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="px-6 py-5 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">Recent Transactions</h3>
+                    <p className="text-sm text-gray-500">Your expense history</p>
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {transactions.length} transactions
+                  </div>
+                </div>
+              </div>
+              
+              <div className="overflow-hidden">
+                {transactions.length === 0 ? (
+                  <div className="px-6 py-12 text-center">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <CreditCard className="w-6 h-6 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500">No transactions yet</p>
+                    <p className="text-sm text-gray-400">Add your first transaction to get started</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-gray-200">
+                    {transactions.map((transaction, index) => (
+                      <div key={transaction.id} className={`px-6 py-4 hover:bg-gray-50 transition-colors duration-150 ${index === 0 ? 'bg-gray-50' : ''}`}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                              <Tag className="w-5 h-5 text-gray-600" />
+                            </div>
+                            <div>
+                              <div className="font-medium text-gray-900">{transaction.remark}</div>
+                              <div className="text-sm text-gray-500 flex items-center space-x-4">
+                                <span className="flex items-center">
+                                  <User className="w-3 h-3 mr-1" />
+                                  {getUsernameById(transaction.payer_id)}
+                                </span>
+                                <span className="flex items-center">
+                                  <Calendar className="w-3 h-3 mr-1" />
+                                  {new Date(transaction.created_at).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-semibold text-gray-900">
+                              ${transaction.amount.toFixed(2)}
+                            </div>
+                            <div className="text-sm text-gray-500">{transaction.category}</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
