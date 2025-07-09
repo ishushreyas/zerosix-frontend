@@ -7,13 +7,6 @@ import { AuthProvider } from './contexts/AuthContext';
 import MainLayout from './components/MainLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './components/Login';
-import Dashboard from './components/Dashboard';
-import Profile from './components/Profile';
-import Chat from './components/Chat';
-import Transaction from './components/Transaction';
-import Notification from './components/Notification';
-import Updates from './components/Updates';
-import TransactionDetail from './components/TransactionDetail';
 
 const App = () => {
   return (
@@ -26,13 +19,8 @@ const App = () => {
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
             <Route element={<MainLayout />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/messages" element={<Chat />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/transactions" element={<Transaction />} />
-              <Route path="/transactions/:id" element={<TransactionDetail />} />
-              <Route path="/notifications" element={<Notification />} />
-              <Route path="/updates" element={<Updates />} />
+              <Route path="/" element={<h1>Main </h1>} />
+              
             </Route>
           </Route>
 

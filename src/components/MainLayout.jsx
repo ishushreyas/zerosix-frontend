@@ -20,10 +20,8 @@ const MainLayout = () => {
   const navigationItems = [
     { path: '/', label: 'Home', icon: Home },
     { path: '/messages', label: 'Messages', icon: MessageCircle },
-    { path: '/notifications', label: 'Notifications', icon: Bell },
     { path: '/transactions', label: 'Transactions', icon: CreditCard },
     { path: '/updates', label: 'Updates', icon: Megaphone },
-    { path: '/profile', label: 'Profile', icon: User },
   ];
 
   const getNavLinkClass = ({ isActive }) => {
