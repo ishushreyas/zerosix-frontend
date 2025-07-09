@@ -2,7 +2,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
-const navigate = useNavigate();
 
 import { auth, googleProvider } from '../firebase';
 import {
@@ -20,6 +19,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
   const register = async (email, password) => {
