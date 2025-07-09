@@ -29,7 +29,7 @@ const Transaction = () => {
     try {
       const response = await api.getUsers();
       console.log('API Response for users:', response.data); // Log the API response
-      setUsers(response.data.users || []);
+      setUsers(response.data || []);
       console.log('Users state after setting:', response.data.users || []); // Log the users state
     } catch (err) {
       console.error('Failed to fetch users:', err);
@@ -205,6 +205,7 @@ const Transaction = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remark</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Members</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                   </tr>
                 </thead>
@@ -216,6 +217,11 @@ const Transaction = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${transaction.amount.toFixed(2)}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.remark}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{transaction.category}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {transaction.members && transaction.members.length > 0
+                          ? transaction.members.map((memberId) => getUsernameById(memberId)).join(', ')
+                          : 'N/A'}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(transaction.created_at).toLocaleDateString()}</td>
                     </tr>
                   ))}
