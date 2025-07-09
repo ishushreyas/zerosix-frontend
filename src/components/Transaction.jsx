@@ -7,7 +7,7 @@ import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Plus, CreditCard, Calendar, User, DollarSign, Tag, MessageSquare } from 'lucide-react';
 import api from '../api';
-import MonthYearPicker from './MonthYearPicker'; // Import MonthYearPicker
+import MonthYearPicker from './MonthYearPicker'; 
 
 const Transaction = () => {
   const [transactions, setTransactions] = useState([]);

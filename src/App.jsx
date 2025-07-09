@@ -13,6 +13,7 @@ import Chat from './components/Chat';
 import Transaction from './components/Transaction';
 import Notification from './components/Notification';
 import Updates from './components/Updates';
+import TransactionDetail from './components/TransactionDetail';
 
 const App = () => {
   return (
