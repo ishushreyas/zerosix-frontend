@@ -28,7 +28,9 @@ const Transaction = () => {
   const fetchUsers = async () => {
     try {
       const response = await api.getUsers();
+      console.log('API Response for users:', response.data); // Log the API response
       setUsers(response.data.users || []);
+      console.log('Users state after setting:', response.data.users || []); // Log the users state
     } catch (err) {
       console.error('Failed to fetch users:', err);
     }
