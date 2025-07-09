@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8000', // Assuming the backend is running on port 8000
+  baseURL: 'https://secure-meggie-ishushreyas-4703d2bf.koyeb.app', // Assuming the backend is running on port 8000
 });
 
 export default {
