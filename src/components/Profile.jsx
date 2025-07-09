@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import api from '../api';
 
 const Profile = () => {
@@ -49,7 +44,6 @@ const Profile = () => {
     if (!selectedFile) return;
     try {
       await api.uploadUserPhoto(user.uid, selectedFile);
-      // Refresh profile after upload
       const response = await api.getProfile();
       setProfile(response.data);
     } catch (error) {
@@ -67,53 +61,99 @@ const Profile = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Profile</h1>
-        <Button variant="outline" onClick={handleSignOut}>Sign Out</Button>
+        <button
+          onClick={handleSignOut}
+          className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-100 transition"
+        >
+          Sign Out
+        </button>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Account Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center space-x-4">
-            <Avatar className="h-16 w-16">
-              <AvatarImage src={profile?.photoURL} alt={displayName} />
-              <AvatarFallback className="text-lg">
-                {displayName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-lg font-semibold">{displayName || 'No display name'}</p>
-              <p className="text-muted-foreground">{user?.email}</p>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="displayName">Display Name</Label>
-            <Input id="displayName" value={displayName} onChange={(e) => setDisplayName(e.target.value)} disabled={!isEditing} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={user?.email || ''} disabled />
-          </div>
-          <div className="flex space-x-2">
-            {isEditing ? (
-              <>
-                <Button onClick={handleSaveProfile}>Save Changes</Button>
-                <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
-              </>
+
+      <div className="bg-white rounded-xl shadow border p-6 space-y-6">
+        <h2 className="text-xl font-semibold">Account Information</h2>
+
+        <div className="flex items-center space-x-4">
+          <div className="h-16 w-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-xl font-bold text-white bg-gradient-to-r from-blue-500 to-purple-600">
+            {profile?.photoURL ? (
+              <img src={profile.photoURL} alt={displayName} className="h-full w-full object-cover" />
             ) : (
-              <Button onClick={() => setIsEditing(true)}>Edit Profile</Button>
+              (displayName?.[0] || user?.email?.[0] || 'U').toUpperCase()
             )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="photo">Profile Picture</Label>
-            <Input id="photo" type="file" onChange={handleFileChange} />
-            <Button onClick={handleFileUpload} disabled={!selectedFile}>Upload</Button>
+          <div>
+            <p className="text-lg font-semibold">{displayName || 'No display name'}</p>
+            <p className="text-gray-500 text-sm">{user?.email}</p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="displayName">Display Name</label>
+          <input
+            id="displayName"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            disabled={!isEditing}
+            className={`w-full px-4 py-2 border rounded-md ${!isEditing ? 'bg-gray-100' : ''}`}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={user?.email || ''}
+            disabled
+            className="w-full px-4 py-2 border rounded-md bg-gray-100"
+          />
+        </div>
+
+        <div className="flex space-x-2">
+          {isEditing ? (
+            <>
+              <button
+                onClick={handleSaveProfile}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+              >
+                Save Changes
+              </button>
+              <button
+                onClick={() => setIsEditing(false)}
+                className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-100 transition"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            >
+              Edit Profile
+            </button>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="photo">Profile Picture</label>
+          <input
+            id="photo"
+            type="file"
+            onChange={handleFileChange}
+            className="block w-full text-sm text-gray-700"
+          />
+          <button
+            onClick={handleFileUpload}
+            disabled={!selectedFile}
+            className="mt-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition disabled:opacity-50"
+          >
+            Upload
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

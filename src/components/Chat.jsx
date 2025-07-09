@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
 import { Send, Smile } from 'lucide-react';
 
 const Chat = () => {
@@ -12,7 +10,7 @@ const Chat = () => {
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
@@ -20,28 +18,20 @@ const Chat = () => {
   }, [messages]);
 
   useEffect(() => {
-    ws.current = new WebSocket('ws://localhost:8000/ws');
+    ws.current = new WebSocket('ws://secure-meggie-ishushreyas-4703d2bf.koyeb.app/ws');
 
-    ws.current.onopen = () => {
-      console.log('connected');
-    };
-
+    ws.current.onopen = () => console.log('connected');
     ws.current.onmessage = (event) => {
       const message = JSON.parse(event.data);
-      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages((prev) => [...prev, message]);
     };
+    ws.current.onclose = () => console.log('disconnected');
 
-    ws.current.onclose = () => {
-      console.log('disconnected');
-    };
-
-    return () => {
-      ws.current.close();
-    };
+    return () => ws.current.close();
   }, []);
 
   const sendMessage = () => {
-    if (newMessage.trim() === '') return;
+    if (!newMessage.trim()) return;
 
     const message = {
       text: newMessage,
@@ -71,8 +61,8 @@ const Chat = () => {
         </p>
       </div>
 
-      {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto mb-6 space-y-4 pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto mb-6 space-y-4 pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
             <div className="text-center">
@@ -84,20 +74,27 @@ const Chat = () => {
             </div>
           </div>
         ) : (
-          messages.map((msg, index) => (
-            <div key={index} className={`flex ${msg.sender === user.uid ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
-                msg.sender === user.uid 
-                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25' 
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-md'
-              }`}>
+          messages.map((msg, idx) => (
+            <div key={idx} className={`flex ${msg.sender === user.uid ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
+                  msg.sender === user.uid
+                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-md'
+                }`}
+              >
                 <p className="text-sm leading-relaxed">{msg.text}</p>
-                <p className={`text-xs mt-2 ${
-                  msg.sender === user.uid 
-                    ? 'text-blue-100' 
-                    : 'text-gray-500 dark:text-gray-400'
-                }`}>
-                  {new Date(msg.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                <p
+                  className={`text-xs mt-2 ${
+                    msg.sender === user.uid
+                      ? 'text-blue-100'
+                      : 'text-gray-500 dark:text-gray-400'
+                  }`}
+                >
+                  {new Date(msg.time).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </p>
               </div>
             </div>
@@ -106,24 +103,28 @@ const Chat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input */}
+      {/* Input */}
       <div className="relative">
         <div className="flex items-center space-x-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-700">
-          <Input
+          <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Type a message..."
-            className="flex-1 border-none bg-transparent focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+            className="flex-1 px-4 py-2 bg-transparent focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
-          <Button 
+          <button
             onClick={sendMessage}
             disabled={!newMessage.trim()}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-300 disabled:to-gray-300 dark:disabled:from-gray-600 dark:disabled:to-gray-600 text-white rounded-xl px-4 py-2 transition-all duration-200 ease-in-out transform hover:scale-105 disabled:transform-none shadow-lg shadow-blue-500/25 disabled:shadow-none"
+            className={`flex items-center justify-center px-4 py-2 rounded-xl text-white transition-all duration-200 ease-in-out transform shadow-lg ${
+              newMessage.trim()
+                ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 hover:scale-105 shadow-blue-500/25'
+                : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
+            }`}
           >
             <Send className="h-4 w-4" />
-          </Button>
+          </button>
         </div>
       </div>
     </div>
