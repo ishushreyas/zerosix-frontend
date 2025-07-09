@@ -11,6 +11,9 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import Profile from './components/Profile';
 import Chat from './components/Chat';
+import Transaction from './components/Transaction';
+import Notification from './components/Notification';
+import Updates from './components/Updates';
 
 const App = () => {
   return (
@@ -27,6 +30,9 @@ const App = () => {
               <Route path="/" element={<Dashboard />} />
               <Route path="/messages" element={<Chat />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/transactions" element={<Transaction />} />
+              <Route path="/notifications" element={<Notification />} />
+              <Route path="/updates" element={<Updates />} />
             </Route>
           </Route>
 

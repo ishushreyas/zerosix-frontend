@@ -1,13 +1,8 @@
 // contexts/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../api';
-import { auth, googleProvider } from '../firebase';
-import {
-  onAuthStateChanged,
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
+
+
 
 const AuthContext = createContext();
 
