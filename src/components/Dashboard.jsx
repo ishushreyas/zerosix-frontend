@@ -10,9 +10,6 @@ const Dashboard = () => {
     const fetchSummary = async () => {
       try {
         const response = await api.getSummary(); // Assuming /summary is the correct endpoint
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
         const data = await response.json();
         setSummaryData(data);
       } catch (e) {

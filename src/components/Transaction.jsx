@@ -57,6 +57,17 @@ const Transaction = () => {
     setNewTransaction((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleMemberChange = (e) => {
+    const { value, checked } = e.target;
+    setNewTransaction((prev) => {
+      if (checked) {
+        return { ...prev, members: [...prev.members, value] };
+      } else {
+        return { ...prev, members: prev.members.filter((member) => member !== value) };
+      }
+    });
+  };
+
   const handleAddTransaction = async () => {
     if (!newTransaction.payer_id || !newTransaction.amount || !newTransaction.category || !newTransaction.payment_method || !newTransaction.remark) {
       return;
@@ -75,7 +86,7 @@ const Transaction = () => {
         category: newTransaction.category,
         payment_method: newTransaction.payment_method,
         created_at: new Date().toISOString(),
-        members: newTransaction.members.length > 0 ? newTransaction.members.split(',').map(m => m.trim()) : [],
+        members: newTransaction.members,
       };
       
       setTransactions(prev => [newTx, ...prev]);
@@ -255,15 +266,24 @@ const Transaction = () => {
                     <Label htmlFor="members" className="text-sm font-medium text-gray-700 mb-2 block">
                       Members (optional)
                     </Label>
-                    <Input
-                      id="members"
-                      name="members"
-                      value={newTransaction.members}
-                      onChange={handleInputChange}
-                      placeholder="user_456, user_789"
-                      className="h-12 border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">Comma-separated user IDs</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {users.map((user) => (
+                        <div key={user.id} className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id={`member-${user.id}`}
+                            name="members"
+                            value={user.id}
+                            checked={newTransaction.members.includes(user.id)}
+                            onChange={handleMemberChange}
+                            className="form-checkbox h-4 w-4 text-black transition duration-150 ease-in-out rounded"
+                          />
+                          <Label htmlFor={`member-${user.id}`} className="text-sm font-medium text-gray-700">
+                            {user.username}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   <Button 
