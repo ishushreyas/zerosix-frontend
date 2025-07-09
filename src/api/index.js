@@ -40,6 +40,10 @@ export default {
       },
     });
   },
+  
+  getSummary() {
+      return apiClient.get('/summary');
+  },
 
   // Transactions
   getTransactions() {

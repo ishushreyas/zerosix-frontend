@@ -5,6 +5,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Plus, CreditCard, Calendar, User, DollarSign, Tag, MessageSquare } from 'lucide-react';
+import api from '../api';
 
 const Transaction = () => {
   const [transactions, setTransactions] = useState([]);
@@ -22,6 +23,35 @@ const Transaction = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    fetchTransactions();
+    fetchUsers(); // Fetch users when component mounts
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await api.getUsers();
+      console.log('API Response for users:', response.data); // Log the API response
+      setUsers(response.data || []);
+      console.log('Users state after setting:', response.data.users || []); // Log the users state
+    } catch (err) {
+      console.error('Failed to fetch users:', err);
+    }
+  };
+
+  const fetchTransactions = async () => {
+    try {
+      setLoading(true);
+      const response = await api.getTransactions();
+      setTransactions(response.data.transactions || []);
+    } catch (err) {
+      setError('Failed to fetch transactions.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewTransaction((prev) => ({ ...prev, [name]: value }));

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../api';
 
 const Dashboard = () => {
   const [summaryData, setSummaryData] = useState(null);
@@ -8,7 +9,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const response = await fetch('/summary'); // Assuming /summary is the correct endpoint
+        const response = await api.getSummary(); // Assuming /summary is the correct endpoint
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
