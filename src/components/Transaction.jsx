@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -22,6 +23,7 @@ const Transaction = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date()); // State for selected date
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchTransactions(selectedDate.getMonth() + 1, selectedDate.getFullYear());
@@ -342,7 +344,11 @@ const Transaction = () => {
                 ) : (
                   <div className="divide-y divide-gray-200">
                     {transactions.map((transaction, index) => (
-                      <div key={transaction.id} className={`px-6 py-4 hover:bg-gray-50 transition-colors duration-150 ${index === 0 ? 'bg-gray-50' : ''}`}>
+                      <div 
+                        key={transaction.id} 
+                        className={`px-6 py-4 hover:bg-gray-50 transition-colors duration-150 cursor-pointer ${index === 0 ? 'bg-gray-50' : ''}`}
+                        onClick={() => navigate(`/transactions/${transaction.id}`)}
+                      >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-4">
                             <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
@@ -350,16 +356,7 @@ const Transaction = () => {
                             </div>
                             <div>
                               <div className="font-medium text-gray-900">{transaction.remark}</div>
-                              <div className="text-sm text-gray-500 flex items-center space-x-4">
-                                <span className="flex items-center">
-                                  <User className="w-3 h-3 mr-1" />
-                                  {getUsernameById(transaction.payer_id)}
-                                </span>
-                                <span className="flex items-center">
-                                  <Calendar className="w-3 h-3 mr-1" />
-                                  {new Date(transaction.created_at).toLocaleDateString()}
-                                </span>
-                              </div>
+                              <div className="text-sm text-gray-500">{transaction.category}</div>
                             </div>
                           </div>
                           <div className="text-right">

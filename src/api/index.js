@@ -50,7 +50,7 @@ export default {
     return apiClient.get('/transactions', { params: { month, year } });
   },
 
-  getTransaction(transactionId) {
+  getSingleTransaction(transactionId) {
     return apiClient.get(`/transactions/${transactionId}`);
   },
 
