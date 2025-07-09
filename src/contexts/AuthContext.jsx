@@ -54,13 +54,24 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setIsLoading(false);
-    });
+  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    if (currentUser) {
+      const idToken = await currentUser.getIdToken();
+      try {
+        await api.sessionLogin(idToken); // ensures backend session sync
+        setUser(currentUser);
+      } catch (err) {
+        console.error('Session login failed:', err);
+        setUser(null);
+      }
+    } else {
+      setUser(null);
+    }
+    setIsLoading(false);
+  });
 
-    return unsubscribe;
-  }, []);
+  return unsubscribe;
+}, []);
 
   const value = {
     user,

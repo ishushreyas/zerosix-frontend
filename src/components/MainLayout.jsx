@@ -84,7 +84,7 @@ const MainLayout = () => {
 
       <div className="flex">
         {/* Sidebar Navigation */}
-        <nav className="w-72 p-6 hidden md:block">
+        <nav className="z-10 w-72 p-6 hidden md:block">
           <div className="space-y-2">
             {navigationItems.map(({ path, label, icon: Icon }) => (
               <NavLink key={path} to={path} className={getNavLinkClass}>

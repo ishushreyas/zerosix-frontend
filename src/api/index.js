@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const apiClient = axios.create({
   baseURL: 'https://secure-meggie-ishushreyas-4703d2bf.koyeb.app', // Assuming the backend is running on port 8000
+  withCredentials: true, // This is crucial for sending cookies with cross-origin requests
 });
 
 export default {
