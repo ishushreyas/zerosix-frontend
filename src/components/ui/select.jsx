@@ -1,7 +1,6 @@
 import React, { useState, createContext, useContext, useRef, useEffect } from 'react';
-import { cn } from '../../lib/utils'; // Assuming cn utility is available
+import { cn } from '../../lib/utils';
 
-// Context for Select components
 const SelectContext = createContext();
 
 const Select = ({ children, value, onValueChange }) => {
@@ -14,17 +13,13 @@ const Select = ({ children, value, onValueChange }) => {
 
   const handleValueChange = (newValue) => {
     setSelectedValue(newValue);
-    if (onValueChange) {
-      onValueChange(newValue);
-    }
-    setIsOpen(false); // Close after selection
+    onValueChange?.(newValue);
+    setIsOpen(false);
   };
 
   return (
     <SelectContext.Provider value={{ isOpen, setIsOpen, selectedValue, handleValueChange }}>
-      <div className="relative">
-        {children}
-      </div>
+      <div className="relative">{children}</div>
     </SelectContext.Provider>
   );
 };
@@ -33,7 +28,6 @@ const SelectTrigger = React.forwardRef(({ className, children, placeholder, ...p
   const { isOpen, setIsOpen, selectedValue } = useContext(SelectContext);
   const triggerRef = useRef(null);
 
-  // Close dropdown if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (triggerRef.current && !triggerRef.current.contains(event.target) && !event.target.closest('.select-content')) {
@@ -41,9 +35,7 @@ const SelectTrigger = React.forwardRef(({ className, children, placeholder, ...p
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [setIsOpen]);
 
   return (
@@ -54,25 +46,26 @@ const SelectTrigger = React.forwardRef(({ className, children, placeholder, ...p
         else if (ref) ref.current = node;
       }}
       className={cn(
-        "flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-1.5 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex h-10 w-full items-center justify-between rounded-xl border border-neutral-300 bg-white px-4 py-2 text-sm text-black shadow-sm transition-all duration-200 ease-in-out hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 disabled:opacity-50",
         className
       )}
       onClick={() => setIsOpen(!isOpen)}
-      type="button" // Prevent form submission
+      type="button"
       {...props}
     >
-      {children || <span className="text-muted-foreground">{placeholder}</span>}
+      {children || <span className="text-neutral-500">{placeholder}</span>}
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
+        className="ml-2 h-4 w-4 text-neutral-400 transition-transform duration-200"
+        style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="h-4 w-4 opacity-50"
+        viewBox="0 0 24 24"
       >
-        <polyline points="6 9 12 15 18 9"></polyline>
+        <polyline points="6 9 12 15 18 9" />
       </svg>
     </button>
   );
@@ -81,26 +74,23 @@ SelectTrigger.displayName = "SelectTrigger";
 
 const SelectValue = ({ children, placeholder }) => {
   const { selectedValue } = useContext(SelectContext);
-  return selectedValue ? children : <span className="text-muted-foreground">{placeholder}</span>;
+  return selectedValue ? children : <span className="text-neutral-500">{placeholder}</span>;
 };
 
 const SelectContent = React.forwardRef(({ className, children, ...props }, ref) => {
   const { isOpen } = useContext(SelectContext);
-  return (
-    isOpen && (
-      <div
-        ref={ref}
-        className={cn(
-          "absolute z-50 mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in fade-in-80",
-          className
-        )}
-        {...props}
-      >
-        <div className="max-h-60 overflow-y-auto p-1">
-          {children}
-        </div>
-      </div>
-    )
+
+  return isOpen && (
+    <div
+      ref={ref}
+      className={cn(
+        "select-content absolute z-50 mt-2 w-full rounded-xl border border-neutral-200 bg-white text-sm shadow-lg transition-all duration-200 animate-in fade-in",
+        className
+      )}
+      {...props}
+    >
+      <div className="max-h-60 overflow-y-auto py-1">{children}</div>
+    </div>
   );
 });
 SelectContent.displayName = "SelectContent";
@@ -113,26 +103,26 @@ const SelectItem = React.forwardRef(({ className, children, value, ...props }, r
     <div
       ref={ref}
       className={cn(
-        "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        isSelected && "bg-accent text-accent-foreground",
+        "relative cursor-pointer select-none rounded-md px-4 py-2 text-sm text-black hover:bg-neutral-100 active:bg-neutral-200 transition-colors duration-150",
+        isSelected && "bg-neutral-200 font-medium",
         className
       )}
       onClick={() => handleValueChange(value)}
       {...props}
     >
       {isSelected && (
-        <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+        <span className="absolute left-2 top-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
+            className="h-4 w-4 text-blue-500"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="h-4 w-4"
+            viewBox="0 0 24 24"
           >
-            <polyline points="20 6 9 17 4 12"></polyline>
+            <polyline points="20 6 9 17 4 12" />
           </svg>
         </span>
       )}

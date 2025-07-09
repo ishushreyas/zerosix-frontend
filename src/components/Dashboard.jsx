@@ -10,7 +10,7 @@ const Dashboard = () => {
     const fetchSummary = async () => {
       try {
         const response = await api.getSummary(); // Assuming /summary is the correct endpoint
-        const data = await response.json();
+        const data = await response.data.json();
         setSummaryData(data);
       } catch (e) {
         setError(e);
