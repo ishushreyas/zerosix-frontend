@@ -7,6 +7,9 @@ import { AuthProvider } from './contexts/AuthContext';
 import MainLayout from './components/MainLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './components/Login';
+import Dashboard from './components/Dashboard';
+import Profile from './components/Profile';
+import Chat from './components/Chat';
 
 const App = () => {
   return (
@@ -19,8 +22,9 @@ const App = () => {
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
             <Route element={<MainLayout />}>
-              <Route path="/" element={<h1>Main </h1>} />
-              
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/messages" element={<Chat />} />
+              <Route path="/profile" element={<Profile />} />
             </Route>
           </Route>
 
