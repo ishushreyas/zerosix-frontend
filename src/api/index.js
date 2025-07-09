@@ -41,13 +41,13 @@ export default {
     });
   },
   
-  getSummary() {
-      return apiClient.get('/summary');
+  getSummary(month, year) {
+      return apiClient.get('/summary', { params: { month, year } });
   },
 
   // Transactions
-  getTransactions() {
-    return apiClient.get('/transactions');
+  getTransactions(month, year) {
+    return apiClient.get('/transactions', { params: { month, year } });
   },
 
   getTransaction(transactionId) {

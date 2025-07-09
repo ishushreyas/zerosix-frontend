@@ -6,12 +6,11 @@ import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Plus, CreditCard, Calendar, User, DollarSign, Tag, MessageSquare } from 'lucide-react';
 import api from '../api';
+import MonthYearPicker from './MonthYearPicker'; // Import MonthYearPicker
 
 const Transaction = () => {
   const [transactions, setTransactions] = useState([]);
-  
   const [users, setUsers] = useState([]);
-  
   const [newTransaction, setNewTransaction] = useState({
     payer_id: '',
     amount: '',
@@ -22,11 +21,12 @@ const Transaction = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date()); // State for selected date
 
   useEffect(() => {
-    fetchTransactions();
+    fetchTransactions(selectedDate.getMonth() + 1, selectedDate.getFullYear());
     fetchUsers(); // Fetch users when component mounts
-  }, []);
+  }, [selectedDate]); // Re-fetch transactions when selectedDate changes
 
   const fetchUsers = async () => {
     try {
@@ -39,10 +39,10 @@ const Transaction = () => {
     }
   };
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = async (month, year) => {
     try {
       setLoading(true);
-      const response = await api.getTransactions();
+      const response = await api.getTransactions(month, year);
       setTransactions(response.data.transactions || []);
     } catch (err) {
       setError('Failed to fetch transactions.');
@@ -52,6 +52,10 @@ const Transaction = () => {
     }
   };
   
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewTransaction((prev) => ({ ...prev, [name]: value }));
@@ -313,9 +317,12 @@ const Transaction = () => {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="px-6 py-5 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900">Recent Transactions</h3>
-                    <p className="text-sm text-gray-500">Your expense history</p>
+                  <div className="flex items-center justify-between w-full">
+                    <div>
+                      <h3 className="text-lg font-medium text-gray-900">Recent Transactions</h3>
+                      <p className="text-sm text-gray-500">Your expense history</p>
+                    </div>
+                    <MonthYearPicker currentDate={selectedDate} onDateChange={handleDateChange} />
                   </div>
                   <div className="text-sm text-gray-500">
                     {transactions.length} transactions

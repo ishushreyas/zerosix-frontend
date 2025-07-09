@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
+import MonthYearPicker from './MonthYearPicker'; // Import MonthYearPicker
 
 const Dashboard = () => {
   const [summaryData, setSummaryData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date()); // State for selected date
 
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const response = await api.getSummary(); // Assuming /summary is the correct endpoint
+        setLoading(true);
+        setError(null);
+        const month = selectedDate.getMonth() + 1; // Month is 0-indexed
+        const year = selectedDate.getFullYear();
+
+        const response = await api.getSummary(month, year); // Pass month and year
         const data = await response.data;
         setSummaryData(data);
       } catch (e) {
@@ -20,12 +27,16 @@ const Dashboard = () => {
     };
 
     fetchSummary();
-  }, []);
+  }, [selectedDate]); // Re-fetch when selectedDate changes
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
 
   if (loading) {
     return (
-      <div>
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
+      <div className="p-6">
+        <h1 className="text-3xl font-bold mb-6">Dashboard Overview</h1>
         <p>Loading summary data...</p>
       </div>
     );
@@ -33,8 +44,8 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div>
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
+      <div className="p-6">
+        <h1 className="text-3xl font-bold mb-6">Dashboard Overview</h1>
         <p>Error loading summary data: {error.message}</p>
       </div>
     );
@@ -42,7 +53,10 @@ const Dashboard = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Dashboard Overview</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Dashboard Overview</h1>
+        <MonthYearPicker currentDate={selectedDate} onDateChange={handleDateChange} />
+      </div>
 
       {summaryData && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
