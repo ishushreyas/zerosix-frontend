@@ -81,6 +81,8 @@ const Transaction = () => {
   };
 
   const getUsernameById = (id) => {
+    console.log('Looking up user for ID:', id);
+    console.log('Available users:', users);
     const user = users.find((u) => u.id === id);
     return user ? user.username : `Unknown User (${id})`;
   };
