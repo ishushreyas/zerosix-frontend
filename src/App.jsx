@@ -9,6 +9,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
+import Profile from './components/Profile';
 import Chat from './components/Chat';
 
 const App = () => {
