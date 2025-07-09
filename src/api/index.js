@@ -6,13 +6,9 @@ const apiClient = axios.create({
 });
 
 export default {
-  // Google OAuth
-  getGoogleAuthURL() {
-    return apiClient.get('/auth/google/url');
-  },
-
-  googleCallback(code, state) {
-    return apiClient.post('/auth/google/callback', { code, state });
+  // Session
+  sessionLogin(idToken) {
+    return apiClient.post('/sessionLogin', { idToken });
   },
 
   logout() {
