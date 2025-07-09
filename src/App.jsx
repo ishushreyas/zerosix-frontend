@@ -7,7 +7,6 @@ import { AuthProvider } from './contexts/AuthContext';
 import MainLayout from './components/MainLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './components/Login';
-import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import Profile from './components/Profile';
 import Chat from './components/Chat';
@@ -22,7 +21,6 @@ const App = () => {
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
