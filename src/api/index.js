@@ -43,7 +43,7 @@ export default {
   },
   
   getSummary(startDate, endDate) {
-      return apiClient.get(`/api/summary?start_date=${startDate}&end_date=${endDate}`);
+      return apiClient.get(`/summary?start_date=${startDate}&end_date=${endDate}`);
   },
 
   // Transactions
