@@ -65,7 +65,7 @@ const seed: Expense[] = Array.from({ length: 48 }).map((_, i) => {
     title: ['Lunch','Uber','Books','Movie','Groceries','Medicine','Electricity','Course'][i%8] + ' #' + (i+1),
     amount: Math.round(200 + Math.random()*4900),
     date: now.toISOString(),
-    payer: payers[i%payers.length],
+    payer: payers[i%payers.length] ?? 'Unknown',
     category: categories[i%categories.length],
     paymentType: pays[i%pays.length],
     notes: 'Sample note for item ' + (i+1)
