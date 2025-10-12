@@ -42,7 +42,7 @@ function MainLayout() {
       {!hideUI && <Header />}
 
       <div className="flex-1 p-6 pb-24">
-        // App.jsx
+        
 <Routes>
   <Route element={<ProtectedRoute />}>
     <Route path="/feed" element={<Feed />} />

@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Sun, Moon } from 'lucide-react';
 
 export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [theme, setTheme] = useState('light');
   const { loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
 
   const handleGoogleSignIn = async () => {
     try {
@@ -25,33 +28,39 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden transition-all duration-500 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 dark:from-gray-900 dark:via-gray-950 dark:to-black">
+    <div className={`${theme === 'light' ? 'bg-gray-100' : 'bg-gray-950'} min-h-screen flex items-center justify-center relative transition-all duration-500`}>
 
-      {/* Subtle blurred background lights */}
-      <div className="absolute top-[-10rem] left-[-10rem] w-[40rem] h-[40rem] bg-blue-400/30 blur-[160px] rounded-full animate-pulse"></div>
-      <div className="absolute bottom-[-10rem] right-[-10rem] w-[40rem] h-[40rem] bg-purple-500/30 blur-[160px] rounded-full animate-pulse"></div>
+      {/* Background soft blur lights */}
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-blue-400/20 blur-[180px] rounded-full animate-pulse"></div>
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-400/20 blur-[180px] rounded-full animate-pulse"></div>
 
       {/* Login Card */}
-      <div className="relative z-10 w-full max-w-md p-8 rounded-3xl backdrop-blur-2xl bg-white/60 dark:bg-gray-900/40 border border-white/20 dark:border-gray-800/50 shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)] transition-all duration-500">
+      <div className="relative z-10 w-full max-w-md p-8 rounded-3xl backdrop-blur-3xl bg-white/60 dark:bg-gray-900/50 border border-white/20 dark:border-gray-700/30 shadow-lg hover:shadow-xl transition-all duration-300">
 
-        {/* Icon */}
+        {/* Theme Toggle */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm hover:bg-white/70 dark:hover:bg-gray-800/70 transition-colors"
+          >
+            {theme === 'light' ? <Moon className="w-5 h-5 text-gray-800" /> : <Sun className="w-5 h-5 text-yellow-400" />}
+          </button>
+        </div>
+
+        {/* Logo */}
         <div className="flex flex-col items-center gap-4">
           <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-500 via-indigo-500 to-purple-500 shadow-inner">
             <MessageCircle className="w-8 h-8 text-white" />
           </div>
-          <div className="text-center">
-            <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">
-              Welcome Back
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Sign in to continue to <span className="font-medium">Zerosix</span>
-            </p>
-          </div>
+          <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 tracking-tight">Welcome Back</h1>
+          <p className="text-gray-600 dark:text-gray-400 text-sm text-center">
+            Sign in to continue to <span className="font-medium">Zerosix</span>
+          </p>
         </div>
 
         {/* Error */}
         {error && (
-          <div className="mt-6 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800 p-3 rounded-xl text-sm text-center transition-all">
+          <div className="mt-6 p-3 rounded-xl bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-center text-sm transition-all">
             {error}
           </div>
         )}
@@ -59,16 +68,16 @@ export default function Login() {
         {/* Divider */}
         <div className="my-8 flex items-center justify-center relative">
           <div className="absolute w-full border-t border-gray-300 dark:border-gray-700"></div>
-          <span className="relative bg-white/80 dark:bg-gray-900/60 backdrop-blur-md px-3 text-xs text-gray-500 dark:text-gray-400">
+          <span className="relative px-3 bg-white/80 dark:bg-gray-900/60 backdrop-blur-sm text-xs text-gray-500 dark:text-gray-400">
             Sign in with
           </span>
         </div>
 
-        {/* Google Button */}
+        {/* Google Sign-in */}
         <button
           onClick={handleGoogleSignIn}
           disabled={loading}
-          className="w-full flex items-center justify-center h-12 rounded-2xl bg-white/80 dark:bg-gray-800/70 text-gray-900 dark:text-gray-100 border border-gray-200/60 dark:border-gray-700/50 backdrop-blur-md shadow-[inset_1px_1px_2px_rgba(255,255,255,0.4),inset_-1px_-1px_2px_rgba(0,0,0,0.15)] hover:shadow-[0_6px_25px_rgba(0,0,0,0.1)] active:scale-[0.99] transition-all duration-300"
+          className="w-full flex items-center justify-center h-12 rounded-2xl bg-white/80 dark:bg-gray-800/70 border border-gray-200/50 dark:border-gray-700/50 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.4),inset_-1px_-1px_2px_rgba(0,0,0,0.15)] hover:shadow-lg active:scale-95 transition-all duration-300"
         >
           <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
@@ -80,7 +89,7 @@ export default function Login() {
         </button>
 
         {/* Terms */}
-        <p className="mt-8 text-center text-xs text-gray-500 dark:text-gray-400">
+        <p className="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
           By signing in, you agree to our{' '}
           <Link to="/terms" className="text-blue-600 dark:text-blue-400 hover:underline">
             Terms
