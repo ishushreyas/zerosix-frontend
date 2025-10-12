@@ -14,13 +14,13 @@ import Header from './components/Header';
 
 function App() {
   return (
-    <AuthProvider>
+    <Router>
       <ThemeProvider>
-        <Router>
+        <AuthProvider>
           <MainLayout />
-        </Router>
+        </AuthProvider>
       </ThemeProvider>
-    </AuthProvider>
+    </Router>
   );
 }
 
