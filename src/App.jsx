@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
-import { ThemeContextProvider, ThemeContext } from './contexts/ThemeContext';
+import { ThemeProvider, ThemeContext } from './contexts/ThemeContext';
 
 import Login from './pages/Login';
 import Feed from './pages/Feed';
@@ -13,11 +13,11 @@ import ProtectedRoute from './components/ProtectedRoute';
 export default function App() {
   return (
     <AuthProvider>
-      <ThemeContextProvider>
+      <ThemeProvider>
         <Router>
           <AppContent />
         </Router>
-      </ThemeContextProvider>
+      </ThemeProvider>
     </AuthProvider>
   );
 }
