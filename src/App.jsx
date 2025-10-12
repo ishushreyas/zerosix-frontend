@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, AuthContext } from './contexts/AuthContext';
-import { ThemeProvider, ThemeContext } from './contexts/ThemeContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 import Login from './pages/Login';
 import Feed from './pages/Feed';
@@ -24,9 +24,6 @@ export default function App() {
 
 // Separate component to use contexts
 function AppContent() {
-  const { theme } = useContext(ThemeContext);
-  const { user } = useContext(AuthContext);
-
   return (
     <div className={`min-h-screen p-6 transition-colors duration-500 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
       {user && <Header theme={theme} setTheme={() => {}} />}
