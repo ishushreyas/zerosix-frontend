@@ -1,14 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import './index.css'; // Assuming you have a main CSS file
+import './index.css'; // TailwindCSS import
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+// Optional: Add Tailwind dark mode class on body
+//document.documentElement.classList.add('dark'); // or remove for system preference
+
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <App />
   </React.StrictMode>
 );

@@ -1,43 +1,35 @@
-// App.js
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { AuthProvider } from './contexts/AuthContext';
+import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import BottomNav from './components/BottomNav';
+import Feed from './pages/Feed';
+import Expenses from './pages/Expenses';
+import Chat from './pages/Chat';
 
-import MainLayout from './components/MainLayout';
-import ProtectedRoute from './components/ProtectedRoute';
-import Login from './components/Login';
-import Dashboard from './components/Dashboard';
-import Profile from './components/Profile';
-import Chat from './components/Chat';
-import Transaction from './components/Transaction';
-import Updates from './components/Updates';
-import TransactionDetail from './components/TransactionDetail';
+export default function App() {
+  const [theme, setTheme] = useState('light');
 
-const App = () => {
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    setTheme(mq.matches ? 'dark' : 'light');
+    const listener = e => setTheme(e.matches ? 'dark' : 'light');
+    mq.addEventListener('change', listener);
+    return () => mq.removeEventListener('change', listener);
+  }, []);
+
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/login" element={<Login />} />
-
-          {/* Protected routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<MainLayout />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/messages" element={<Chat />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/transactions" element={<Transaction />} />
-              <Route path="/transactions/:id" element={<TransactionDetail />} />
-              <Route path="/updates" element={<Updates />} />
-            </Route>
-          </Route>
-
-        </Routes>
-      </AuthProvider>
-    </ThemeProvider>
+    <Router>
+      <div className={`min-h-screen p-6 transition-colors duration-500 ${theme==='dark'?'bg-gray-900 text-white':'bg-gray-50 text-gray-900'}`}>
+        <Header theme={theme} setTheme={setTheme} />
+        <div className="mb-16">
+          <Routes>
+            <Route path="/" element={<Feed />} />
+            <Route path="/expenses" element={<Expenses />} />
+            <Route path="/chat" element={<Chat />} />
+          </Routes>
+        </div>
+        <BottomNav />
+      </div>
+    </Router>
   );
-};
-
-export default App;
+}
