@@ -13,10 +13,9 @@ export default function SearchModal({ onClose }) {
         <div className="p-4">
           <input
             type="text"
-            placeholder="Type to search..."
+            placeholder="Search transactions or stories..."
             className="w-full px-3 py-2 border rounded-xl dark:bg-gray-700 dark:border-gray-600"
           />
-          {/* Future: Add results here */}
           <div className="mt-4 text-gray-500 text-center">No results yet</div>
         </div>
       </div>
