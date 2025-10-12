@@ -42,34 +42,17 @@ function MainLayout() {
       {!hideUI && <Header />}
 
       <div className="flex-1 p-6 pb-24">
-        <Routes>
-          <Route path="/login" element={!user ? <Login /> : <Navigate to="/feed" />} />
-          <Route
-            path="/feed"
-            element={
-              <ProtectedRoute>
-                <Feed />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/expenses"
-            element={
-              <ProtectedRoute>
-                <Expenses />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/chat"
-            element={
-              <ProtectedRoute>
-                <Chat />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<Navigate to={user ? '/feed' : '/login'} />} />
-        </Routes>
+        // App.jsx
+<Routes>
+  <Route element={<ProtectedRoute />}>
+    <Route path="/feed" element={<Feed />} />
+    <Route path="/expenses" element={<Expenses />} />
+    <Route path="/chat" element={<Chat />} />
+  </Route>
+  <Route path="/login" element={!user ? <Login /> : <Navigate to="/feed" />} />
+  <Route path="*" element={<Navigate to={user ? '/feed' : '/login'} />} />
+</Routes>
+
       </div>
 
       {!hideUI && <BottomNav />}
