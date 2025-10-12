@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthContextProvider, AuthContext } from './contexts/AuthContext';
+import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { ThemeContextProvider, ThemeContext } from './contexts/ThemeContext';
 
 import Login from './pages/Login';
@@ -12,13 +12,13 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   return (
-    <AuthContextProvider>
+    <AuthProvider>
       <ThemeContextProvider>
         <Router>
           <AppContent />
         </Router>
       </ThemeContextProvider>
-    </AuthContextProvider>
+    </AuthProvider>
   );
 }
 
