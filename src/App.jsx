@@ -78,7 +78,7 @@ function MainLayout() {
 
 function BottomNav() {
   const location = useLocation();
-  const { theme } = useContext(ThemeContext);
+  const { theme } = useTheme();
   const active = (path) => location.pathname === path;
 
   return (
