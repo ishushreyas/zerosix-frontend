@@ -11,6 +11,7 @@ import Feed from './pages/Feed';
 import Expenses from './pages/Expenses';
 import Chat from './pages/Chat';
 import Header from './components/Header';
+import BottomNav from './components/BottomNav';
 
 function App() {
   return (
@@ -73,22 +74,6 @@ function MainLayout() {
 
       {!hideUI && <BottomNav />}
     </div>
-  );
-}
-
-function BottomNav() {
-  const location = useLocation();
-  const { theme } = useTheme();
-  const active = (path) => location.pathname === path;
-
-  return (
-    <nav className="fixed inset-x-0 bottom-4 mx-auto max-w-md px-4 z-50">
-      <div className={`grid grid-cols-3 rounded-3xl border ${theme === 'dark' ? 'border-gray-700 bg-gray-800/70' : 'border-gray-300 bg-white/70'} backdrop-blur-xl p-2 shadow-lg`}>
-        <NavItem to="/feed" active={active('/feed')} icon={<Newspaper className="h-5 w-5" />} label="Feed" />
-        <NavItem to="/expenses" active={active('/expenses')} icon={<Wallet className="h-5 w-5" />} label="Expenses" />
-        <NavItem to="/chat" active={active('/chat')} icon={<MessageCircle className="h-5 w-5" />} label="Chat" />
-      </div>
-    </nav>
   );
 }
 
