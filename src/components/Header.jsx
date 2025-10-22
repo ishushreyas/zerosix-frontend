@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Plus, User, Sun, Moon } from 'lucide-react';
 import AddRoomModal from './AddRoomModal';
 import AddExpenseModal from './AddExpenseModal';
-import { useTheme } from './contexts/ThemeContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
