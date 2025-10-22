@@ -7,7 +7,7 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { ThemeProvider } from './contexts/ThemeContext';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import Header from './components/Header';
@@ -34,6 +34,7 @@ export default function App() {
 // Handles layout, theme, and routes
 function MainLayout() {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const location = useLocation();
 
   const hideUI = location.pathname === '/login';
