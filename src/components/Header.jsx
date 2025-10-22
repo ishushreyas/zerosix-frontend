@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Plus, User, Sun, Moon } from 'lucide-react';
 import AddRoomModal from './AddRoomModal';
 import AddExpenseModal from './AddExpenseModal';
+import { useTheme } from './contexts/ThemeContext';
 
-export default function Header({ theme, setTheme }) {
+export default function Header() {
+  const { theme, toggleTheme } = useTheme();
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showAddRoom, setShowAddRoom] = useState(false);
@@ -70,7 +72,7 @@ export default function Header({ theme, setTheme }) {
               Profile
             </button>
             <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={toggleTheme}
               className="w-full text-left px-5 py-3 flex items-center justify-between text-gray-800 dark:text-gray-200 hover:bg-white/50 dark:hover:bg-gray-700/50 transition"
             >
               Theme
